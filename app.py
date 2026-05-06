@@ -1,0 +1,83 @@
+import streamlit as st
+import random
+import json
+import os
+
+# JSON 파일 안정적으로 불러오기
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(BASE_DIR, "food.json")
+
+with open(file_path, "r", encoding="utf-8") as f:
+    food_data = json.load(f)
+
+st.set_page_config(page_title="오늘 뭐 먹지? 해결사", page_icon="🍽️")
+
+st.title("🍽️ 오늘 뭐 먹지? 해결사")
+
+menu = st.sidebar.selectbox("기능 선택", [
+    "상황별 음식 추천",
+    "카테고리별 메뉴",
+    "룰렛 (메뉴 추천)",
+    "결제 룰렛 게임"
+])
+
+# -------------------------------
+# 1. 상황별 추천
+# -------------------------------
+if menu == "상황별 음식 추천":
+    st.header("상황별 음식 추천")
+
+    mood = st.selectbox("현재 상황 선택", [
+        "혼밥", "데이트", "비오는날", "스트레스", "기분좋음", "야식", "해장"
+    ])
+
+    if st.button("추천 받기"):
+        filtered = [f for f in food_data if mood in f["mood"]]
+
+        if filtered:
+            result = random.choice(filtered)
+            st.success(f"👉 오늘은 **{result['name']}** 어때?")
+        else:
+            st.warning("추천 가능한 메뉴가 없어요 😢")
+
+# -------------------------------
+# 2. 카테고리 메뉴 보기
+# -------------------------------
+elif menu == "카테고리별 메뉴":
+    st.header("카테고리별 메뉴")
+
+    category = st.selectbox("카테고리 선택", [
+        "한식", "중식", "일식", "양식", "분식", "야식"
+    ])
+
+    filtered = [f for f in food_data if f["category"] == category]
+
+    for f in filtered:
+        st.write(f"🍴 {f['name']}")
+
+# -------------------------------
+# 3. 메뉴 룰렛
+# -------------------------------
+elif menu == "룰렛 (메뉴 추천)":
+    st.header("🎡 메뉴 룰렛")
+
+    if st.button("룰렛 돌리기!"):
+        result = random.choice(food_data)
+        st.success(f"🎯 오늘 메뉴는 → **{result['name']}**")
+
+# -------------------------------
+# 4. 결제 룰렛 게임
+# -------------------------------
+elif menu == "결제 룰렛 게임":
+    st.header("💸 결제 룰렛 게임")
+
+    people_input = st.text_input("참가자 이름 (쉼표로 구분)", "철수,영희,민수")
+
+    if st.button("누가 쏠까? 😈"):
+        people = [p.strip() for p in people_input.split(",") if p.strip()]
+
+        if len(people) < 2:
+            st.warning("최소 2명 필요!")
+        else:
+            loser = random.choice(people)
+            st.error(f"💥 오늘 결제는 → **{loser}** 😈")
