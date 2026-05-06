@@ -27,7 +27,10 @@ menu = st.sidebar.selectbox("기능 선택", [
 if menu == "상황별 음식 추천":
     st.header("상황별 음식 추천")
 
-st.info("""
+if menu == "상황별 음식 추천":
+    st.header("상황별 음식 추천")
+
+    st.info("""
 추천 기준:
 - 혼밥: 혼자 먹기 좋은 음식
 - 데이트: 분위기 있는 음식
@@ -38,10 +41,10 @@ st.info("""
 - 간단: 빠르게 먹기 좋은 음식
 - 야식: 밤에 먹기 좋은 음식
 """)
-    
+
     mood = st.selectbox("현재 상황 선택", [
-    "혼밥", "데이트", "친구", "회식", "비오는날", "해장", "간단", "야식"
-])
+        "혼밥", "데이트", "친구", "회식", "비오는날", "해장", "간단", "야식"
+    ])
 
     if st.button("추천 받기"):
         filtered = [f for f in food_data if mood in f["mood"]]
@@ -49,9 +52,7 @@ st.info("""
         if filtered:
             result = random.choice(filtered)
             st.success(f"👉 오늘은 **{result['name']}** 어때?")
-        else:
-            st.warning("추천 가능한 메뉴가 없어요 😢")
-
+       
 # -------------------------------
 # 2. 카테고리 메뉴 보기
 # -------------------------------
