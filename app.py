@@ -1,3 +1,34 @@
+import streamlit as st
+import random
+import json
+import os
+import time
+
+# -------------------------------
+# JSON 데이터 불러오기 (안정 버전)
+# -------------------------------
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(BASE_DIR, "food.json")
+
+with open(file_path, "r", encoding="utf-8") as f:
+    food_data = json.load(f)
+
+# -------------------------------
+# 기본 설정
+# -------------------------------
+st.set_page_config(page_title="오늘 뭐 먹지? 해결사", page_icon="🍽️")
+st.title("🍽️ 오늘 뭐 먹지? 해결사")
+
+# -------------------------------
+# 메뉴 선택 (⭐ 반드시 먼저 선언)
+# -------------------------------
+menu = st.sidebar.selectbox("기능 선택", [
+    "상황별 음식 추천",
+    "카테고리별 메뉴",
+    "룰렛 (메뉴 추천)",
+    "결제 룰렛 게임"
+])
+
 # -------------------------------
 # 1. 상황별 추천
 # -------------------------------
@@ -29,7 +60,6 @@ if menu == "상황별 음식 추천":
         else:
             st.warning("추천 가능한 메뉴가 없어요 😢")
 
-
 # -------------------------------
 # 2. 카테고리 메뉴 보기
 # -------------------------------
@@ -45,18 +75,16 @@ elif menu == "카테고리별 메뉴":
     for f in filtered:
         st.write(f"🍴 {f['name']}")
 
-
 # -------------------------------
 # 3. 메뉴 룰렛
 # -------------------------------
 elif menu == "룰렛 (메뉴 추천)":
-    import time
-
     st.header("🎡 메뉴 룰렛")
 
     if st.button("룰렛 돌리기!"):
         placeholder = st.empty()
 
+        # 돌아가는 효과
         for _ in range(15):
             temp = random.choice(food_data)
             placeholder.markdown(f"🎯 **{temp['name']}**")
@@ -64,7 +92,6 @@ elif menu == "룰렛 (메뉴 추천)":
 
         result = random.choice(food_data)
         placeholder.success(f"🎉 오늘 메뉴는 → **{result['name']}**")
-
 
 # -------------------------------
 # 4. 결제 룰렛 게임
