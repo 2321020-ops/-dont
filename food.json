@@ -1,17 +1,30 @@
 [
   {"name": "김치찌개", "category": "한식", "mood": ["혼밥", "비오는날", "해장"]},
   {"name": "된장찌개", "category": "한식", "mood": ["혼밥"]},
-  {"name": "비빔밥", "category": "한식", "mood": ["건강"]},
+  {"name": "불고기", "category": "한식", "mood": ["데이트", "회식"]},
+  {"name": "삼겹살", "category": "한식", "mood": ["회식", "친구"]},
+  {"name": "비빔밥", "category": "한식", "mood": ["혼밥"]},
+  {"name": "냉면", "category": "한식", "mood": ["더운날"]},
 
-  {"name": "짜장면", "category": "중식", "mood": ["간단"]},
+  {"name": "짜장면", "category": "중식", "mood": ["간단", "혼밥"]},
   {"name": "짬뽕", "category": "중식", "mood": ["해장", "비오는날"]},
+  {"name": "탕수육", "category": "중식", "mood": ["친구", "회식"]},
+  {"name": "마라탕", "category": "중식", "mood": ["스트레스"]},
 
   {"name": "초밥", "category": "일식", "mood": ["데이트"]},
   {"name": "라멘", "category": "일식", "mood": ["혼밥"]},
+  {"name": "돈까스", "category": "일식", "mood": ["간단"]},
+  {"name": "우동", "category": "일식", "mood": ["혼밥"]},
 
   {"name": "파스타", "category": "양식", "mood": ["데이트"]},
   {"name": "피자", "category": "양식", "mood": ["친구"]},
+  {"name": "햄버거", "category": "양식", "mood": ["간단"]},
+  {"name": "스테이크", "category": "양식", "mood": ["데이트"]},
 
   {"name": "떡볶이", "category": "분식", "mood": ["간식"]},
-  {"name": "치킨", "category": "야식", "mood": ["야식", "스트레스"]}
+  {"name": "순대", "category": "분식", "mood": ["간식"]},
+
+  {"name": "치킨", "category": "야식", "mood": ["야식", "스트레스"]},
+  {"name": "족발", "category": "야식", "mood": ["야식"]},
+  {"name": "보쌈", "category": "야식", "mood": ["야식"]}
 ]
