@@ -5,7 +5,7 @@ import os
 import time
 
 # -------------------------------
-# JSON 데이터 불러오기 (안정 버전)
+# 데이터 불러오기
 # -------------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(BASE_DIR, "food.json")
@@ -14,14 +14,11 @@ with open(file_path, "r", encoding="utf-8") as f:
     food_data = json.load(f)
 
 # -------------------------------
-# 기본 설정
+# 기본 UI
 # -------------------------------
 st.set_page_config(page_title="오늘 뭐 먹지? 해결사", page_icon="🍽️")
 st.title("🍽️ 오늘 뭐 먹지? 해결사")
 
-# -------------------------------
-# 메뉴 선택 (⭐ 반드시 먼저 선언)
-# -------------------------------
 menu = st.sidebar.selectbox("기능 선택", [
     "상황별 음식 추천",
     "카테고리별 메뉴",
@@ -37,77 +34,98 @@ if menu == "상황별 음식 추천":
 
     st.info("""
 추천 기준:
-- 혼밥: 혼자 먹기 좋은 음식
-- 데이트: 분위기 있는 음식
-- 친구: 같이 먹기 좋은 메뉴
-- 회식: 여러 명이 먹기 좋은 음식
-- 비오는날: 국물/따뜻한 음식
-- 해장: 속 풀리는 음식
-- 간단: 빠르게 먹기 좋은 음식
-- 야식: 밤에 먹기 좋은 음식
+혼밥 / 데이트 / 친구 / 회식 / 비오는날 / 해장 / 간단 / 야식
 """)
 
-    mood = st.selectbox("현재 상황 선택", [
-        "혼밥", "데이트", "친구", "회식", "비오는날", "해장", "간단", "야식"
+    mood = st.selectbox("상황 선택", [
+        "혼밥","데이트","친구","회식","비오는날","해장","간단","야식"
     ])
 
-    if st.button("추천 받기"):
-        filtered = [f for f in food_data if mood in f["mood"]]
+    filtered = [f for f in food_data if mood in f["mood"]]
 
-        if filtered:
-            result = random.choice(filtered)
-            st.success(f"👉 오늘은 **{result['name']}** 어때?")
-        else:
-            st.warning("추천 가능한 메뉴가 없어요 😢")
+    if "last" not in st.session_state:
+        st.session_state.last = None
+
+    if st.button("추천 받기"):
+        choices = [f for f in filtered if f != st.session_state.last]
+
+        if not choices:
+            choices = filtered
+
+        result = random.choice(choices)
+        st.session_state.last = result
+
+        st.success(f"👉 {result['name']} 추천!")
 
 # -------------------------------
-# 2. 카테고리 메뉴 보기
+# 2. 카테고리
 # -------------------------------
 elif menu == "카테고리별 메뉴":
     st.header("카테고리별 메뉴")
 
-    category = st.selectbox("카테고리 선택", [
-        "한식", "중식", "일식", "양식", "분식", "야식"
+    category = st.selectbox("카테고리", [
+        "한식","중식","일식","양식","분식","야식"
     ])
 
     filtered = [f for f in food_data if f["category"] == category]
 
     for f in filtered:
-        st.write(f"🍴 {f['name']}")
+        st.write("🍴", f["name"])
 
 # -------------------------------
-# 3. 메뉴 룰렛
+# 3. 룰렛
 # -------------------------------
 elif menu == "룰렛 (메뉴 추천)":
-    st.header("🎡 메뉴 룰렛")
+    st.header("🎡 룰렛")
 
-    if st.button("룰렛 돌리기!"):
+    if st.button("돌리기"):
         placeholder = st.empty()
 
-        # 돌아가는 효과
-        for _ in range(15):
+        for _ in range(30):
             temp = random.choice(food_data)
-            placeholder.markdown(f"🎯 **{temp['name']}**")
-            time.sleep(0.1)
+            placeholder.markdown(
+                f"<h1 style='text-align:center;color:orange'>{temp['name']}</h1>",
+                unsafe_allow_html=True
+            )
+            time.sleep(0.04)
 
         result = random.choice(food_data)
-        placeholder.success(f"🎉 오늘 메뉴는 → **{result['name']}**")
+
+        st.balloons()
+
+        placeholder.markdown(
+            f"<h1 style='text-align:center;color:red'>🎉 {result['name']} 🎉</h1>",
+            unsafe_allow_html=True
+        )
 
 # -------------------------------
-# 4. 결제 룰렛 게임
+# 4. 결제 룰렛 게임 (🔥 업그레이드)
 # -------------------------------
 elif menu == "결제 룰렛 게임":
-    st.header("💸 결제 룰렛 게임")
+    st.header("💸 결제 게임")
 
     people_input = st.text_input("참가자 이름 (쉼표로 구분)", "철수,영희,민수")
 
-    if st.button("누가 쏠까? 😈"):
-        people = [p.strip() for p in people_input.split(",") if p.strip()]
+    people = [p.strip() for p in people_input.split(",") if p.strip()]
 
-        if len(people) < 2:
-            st.warning("최소 2명 필요!")
-        elif len(people) > 10:
-            st.warning("최대 10명까지 가능!")
+    if people:
+        pay_count = st.number_input(
+            "몇 명이 결제할까요?",
+            min_value=1,
+            max_value=len(people),
+            value=1
+        )
+
+    if st.button("결정"):
+        if len(people) < 1:
+            st.warning("참가자를 입력하세요")
         else:
+            pay_count = min(pay_count, len(people))
+
+            losers = random.sample(people, pay_count)
+
+            st.balloons()
+
+            st.error(f"💥 결제 당첨자: {', '.join(losers)}")
             loser = random.choice(people)
             st.error(f"💥 오늘 결제는 → **{loser}** 😈")
